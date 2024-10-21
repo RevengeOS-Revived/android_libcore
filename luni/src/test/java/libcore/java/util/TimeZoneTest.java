@@ -99,7 +99,10 @@ public class TimeZoneTest extends TestCase {
     public void testGetDisplayNameShort_nonHourOffsets() {
         TimeZone iranTz = TimeZone.getTimeZone("Asia/Tehran");
         assertEquals("GMT+03:30", iranTz.getDisplayName(false, TimeZone.SHORT, Locale.UK));
-        assertEquals("GMT+04:30", iranTz.getDisplayName(true, TimeZone.SHORT, Locale.UK));
+
+        TimeZone chathamTz = TimeZone.getTimeZone("Pacific/Chatham");
+        assertEquals("GMT+12:45", chathamTz.getDisplayName(false, TimeZone.SHORT, Locale.UK));
+        assertEquals("GMT+13:45", chathamTz.getDisplayName(true, TimeZone.SHORT, Locale.UK));
     }
 
     public void testPreHistoricOffsets() throws Exception {
@@ -319,12 +322,16 @@ public class TimeZoneTest extends TestCase {
     }
 
     // http://b/7955614
-    public void testApia() throws Exception {
+    public void testApia() {
         TimeZone tz = TimeZone.getTimeZone("Pacific/Apia");
         assertEquals("Apia Daylight Time", tz.getDisplayName(true, TimeZone.LONG, Locale.US));
         assertEquals("Apia Standard Time", tz.getDisplayName(false, TimeZone.LONG, Locale.US));
-        assertEquals("GMT+14:00", tz.getDisplayName(true, TimeZone.SHORT, Locale.US));
-        assertEquals("GMT+13:00", tz.getDisplayName(false, TimeZone.SHORT, Locale.US));
+
+        long samoaStandardTime = 1630315635000L; // 30 Aug 2021
+        long samoaDst = 1614504435000L; // 28 Feb 2021
+
+        assertEquals(13 * 60 * 60 * 1_000, tz.getOffset(samoaStandardTime));
+        assertEquals(14 * 60 * 60 * 1_000, tz.getOffset(samoaDst));
     }
 
     private static boolean isGmtString(String s) {
